@@ -1,0 +1,3 @@
+Locales['it'] = {
+    ['test'] = 'test',
+}
