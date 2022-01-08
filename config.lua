@@ -49,9 +49,18 @@ Config.vehicleModel = {
 
 --Ped models
 Config.pedModels = {
-    'a_f_y_business_02',
-    'a_f_y_tourist_01',
-    'a_m_m_socenlat_01'
+    {
+        model = 'a_f_y_business_02',
+        type = 5
+    },
+    {
+        model = 'a_f_y_tourist_01',
+        type = 5
+    },
+    {
+        model = 'a_m_m_socenlat_01',
+        type = 4
+    },
 }
 
 --Distances
