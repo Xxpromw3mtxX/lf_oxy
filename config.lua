@@ -6,6 +6,9 @@ Config.Locale = 'it'
 --Wait ticktime
 Config.TickTime = 1000
 
+--Starting Black money amount
+Config.startAmount = 1500
+
 --Start item
 Config.startItem = 'suspicious_package'
 Config.maxStartItem = 3
