@@ -1,7 +1,6 @@
 ESX = nil
 local randomPed
 local randomDelivery
-local randomPedHash
 local oxyPed
 
 AddEventHandler('onResourceStop', function(resourceName)
@@ -21,7 +20,6 @@ RegisterNetEvent('atlantis_oxy:initOxy')
 AddEventHandler('atlantis_oxy:initOxy', function()
 	randomPed = math.random(1, #Config.npcLocations)
     randomDelivery = math.randmon(1, #Config.deliveryPoints)
-    randomPedHash = math.random(1, #Config.pedModels)
 
 	createNPC(Config.pedModels[1].type, Config.pedModels[1].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false)
 
