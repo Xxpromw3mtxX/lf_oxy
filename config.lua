@@ -42,8 +42,16 @@ Config.deliveryPoints = {
     vector3(-227.40120, -1486.49900, 30.79996),
 }
 
---Ped vehicle model
-Config.vehicleModel = {
+--Ped vehicle model and drive type
+Config.vehicleModels = {
+    'washington',
+    'gauntlet',
+    'glendale',
+    'panto',
+    'sultan',
+}
+
+Config.vehicleDriveType = {
     1074528293, --Rushed
     786603, --Normal
     2883621, --Ignore Lights
