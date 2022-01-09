@@ -23,7 +23,7 @@ AddEventHandler('atlantis_oxy:initOxy', function()
     randomDelivery = math.randmon(1, #Config.deliveryPoints)
     randomPedHash = math.random(1, #Config.pedModels)
 
-	createNPC(Config.pedModels[randomPedHash].type, Config.pedModels[randomPedHash].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false)
+	createNPC(Config.pedModels[1].type, Config.pedModels[1].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false)
 
 	-- ADD WAYPOINT SETTER
 end)
