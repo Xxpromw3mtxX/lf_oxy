@@ -15,12 +15,17 @@ Citizen.CreateThread(function()
 		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 		Citizen.Wait(0)
 	end
+end)
 
-    randomPed = math.random(1, #Config.npcLocations)
+RegisterNetEvent('atlantis_oxy:initOxy')
+AddEventHandler('atlantis_oxy:initOxy', function()
+	randomPed = math.random(1, #Config.npcLocations)
     randomDelivery = math.randmon(1, #Config.deliveryPoints)
     randomPedHash = math.random(1, #Config.pedModels)
 
-    createNPC(Config.pedModels[randomPedHash].type, Config.pedModels[randomPedHash].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false)
+	createNPC(Config.pedModels[randomPedHash].type, Config.pedModels[randomPedHash].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false)
+
+	-- ADD WAYPOINT SETTER
 end)
 
 function createNPC(pType, hash, location, heading, isSynced)
