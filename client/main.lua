@@ -1,13 +1,29 @@
 ESX = nil
-local randomPed
-local randomDelivery
+
+--PED info
 local oxyPed
 
+--local variables
+local randomPed = 1
+local randomDelivery = 1
+local randomPedSeller = 1
+local hasStarted = false
+
+--items amounts
+local suspicious
+local maxRewardOxy
+
+--blip
+local oxyBlips
+
+
+-- Delete PED on resource stop
 AddEventHandler('onResourceStop', function(resourceName)
-    if (GetCurrentResourceName() == resourceName) then
-        DeletePed(oxyPed)
-    end
-end)  
+	if (GetCurrentResourceName() == resourceName) then
+		DeletePed(oxyPed)
+        SetPedAsNoLongerNeeded(oxyPed)
+	end
+end)
 
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -16,20 +32,62 @@ Citizen.CreateThread(function()
 	end
 end)
 
+function createNPC(pType, pModel, location, heading, isNetwork, bScriptHostPed)
+	RequestModel(GetHashKey(pModel))
+	while not HasModelLoaded(GetHashKey(pModel)) do
+		Citizen.Wait(1)
+	end
+
+    if not DoesEntityExist(oxyPed) then
+		oxyPed = CreatePed(pType, pModel, location, heading, isNetwork, bScriptHostPed)
+		FreezeEntityPosition(oxyPed, true)
+		SetEntityInvincible(oxyPed, true)
+		SetBlockingOfNonTemporaryEvents(oxyPed, true)
+		TaskStartScenarioInPlace(oxyPed, "WORLD_HUMAN_COP_IDLES", 0, true)
+	end
+	SetModelAsNoLongerNeeded(pModel)
+end
+
+function removeNPC()
+	DeletePed(oxyPed)
+    SetPedAsNoLongerNeeded(oxyPed)
+end
+
 RegisterNetEvent('atlantis_oxy:initOxy')
 AddEventHandler('atlantis_oxy:initOxy', function()
 	randomPed = math.random(1, #Config.npcLocations)
-    randomDelivery = math.randmon(1, #Config.deliveryPoints)
+    randomDelivery = math.random(1, #Config.deliveryPoints)
+	randomPedSeller = math.random(1, #Config.sellerPed)
 
-	createNPC(Config.pedModels[1].type, Config.pedModels[1].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false)
+	suspicious = math.random(1, Config.maxStartItem)
+	maxRewardOxy = math.random(1, Config.maxOxy)
 
-	-- ADD WAYPOINT SETTER
+	hasStarted = true
+
+	createNPC(Config.sellerPed[randomPedSeller].type, Config.sellerPed[randomPedSeller].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false, true)
+
+	--Add waypoint
+	oxyBlips = AddBlipForCoord(Config.npcLocations[randomPed].position)
+	SetBlipSprite(oxyBlips, 1)
+	SetBlipDisplay(oxyBlips, 4)
+	SetBlipScale(oxyBlips, 1.0)
+	SetBlipColour(oxyBlips, 5)
+	SetBlipAsShortRange(oxyBlips, true)
+	BeginTextCommandSetBlipName("STRING")
+	AddTextComponentString('ritiro')
+	EndTextCommandSetBlipName(oxyBlips)
+
+	SetBlipRoute(oxyBlips, true)
 end)
 
-function createNPC(pType, hash, location, heading, isSynced)
-	oxyPed = CreatePed(pType, hash, location, heading, isSynced)
-	FreezeEntityPosition(oxyPed, true)
-	SetEntityInvincible(oxyPed, true)
-	SetBlockingOfNonTemporaryEvents(oxyPed, true)
-	TaskStartScenarioInPlace(oxyPed, "WORLD_HUMAN_COP_IDLES", 0, true)
-end
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(Config.TickTime)
+
+		local coords = GetEntityCoords(GetPlayerPed(-1))
+		
+		if hasStarted and GetDistanceBetweenCoords(coords, Config.npcLocations[randomPed].position, false) < 10 then
+			RemoveBlip(oxyBlips)
+		end
+	end
+end)
