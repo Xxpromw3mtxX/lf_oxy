@@ -7,6 +7,8 @@ Config.Locale = 'it'
 Config.TickTime = 1000
 
 --Starting Black money amount
+Config.usebMoney = true
+Config.mAccount = 'black_money'
 Config.startAmount = 1500
 
 --Start item
@@ -40,22 +42,6 @@ Config.deliveryPoints = {
     vector3(-777.35500, 373.81520, 87.35204),
     vector3(-939.38060, 309.26740, 70.67439),
     vector3(-227.40120, -1486.49900, 30.79996),
-}
-
---Ped vehicle model and drive type
-Config.vehicleModels = {
-    'washington',
-    'gauntlet',
-    'glendale',
-    'panto',
-    'sultan',
-}
-
-Config.vehicleDriveType = {
-    1074528293, --Rushed
-    786603, --Normal
-    2883621, --Ignore Lights
-    5, --Sometimes Overtake Traffic
 }
 
 --Ped models
@@ -95,4 +81,3 @@ Config.pedModels = {
 
 --Distances
 Config.interactDistances = 2
-Config.blipDistances = 5
