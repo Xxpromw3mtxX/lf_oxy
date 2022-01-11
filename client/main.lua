@@ -53,6 +53,20 @@ function removeNPC()
     SetPedAsNoLongerNeeded(oxyPed)
 end
 
+function setWaypoint(coords, bName)
+	oxyBlips = AddBlipForCoord(coords)
+	SetBlipSprite(oxyBlips, 1)
+	SetBlipDisplay(oxyBlips, 4)
+	SetBlipScale(oxyBlips, 1.0)
+	SetBlipColour(oxyBlips, 5)
+	SetBlipAsShortRange(oxyBlips, true)
+	BeginTextCommandSetBlipName("STRING")
+	AddTextComponentString(bName)
+	EndTextCommandSetBlipName(oxyBlips)
+
+	SetBlipRoute(oxyBlips, true)
+end
+
 RegisterNetEvent('atlantis_oxy:initOxy')
 AddEventHandler('atlantis_oxy:initOxy', function()
 	randomPed = math.random(1, #Config.npcLocations)
@@ -65,19 +79,7 @@ AddEventHandler('atlantis_oxy:initOxy', function()
 	hasStarted = true
 
 	createNPC(Config.sellerPed[randomPedSeller].type, Config.sellerPed[randomPedSeller].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false, true)
-
-	--Add waypoint
-	oxyBlips = AddBlipForCoord(Config.npcLocations[randomPed].position)
-	SetBlipSprite(oxyBlips, 1)
-	SetBlipDisplay(oxyBlips, 4)
-	SetBlipScale(oxyBlips, 1.0)
-	SetBlipColour(oxyBlips, 5)
-	SetBlipAsShortRange(oxyBlips, true)
-	BeginTextCommandSetBlipName("STRING")
-	AddTextComponentString('ritiro')
-	EndTextCommandSetBlipName(oxyBlips)
-
-	SetBlipRoute(oxyBlips, true)
+	setWaypoint(Config.npcLocations[randomPed].position, _U('oRecovery'))
 end)
 
 Citizen.CreateThread(function()
