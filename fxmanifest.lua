@@ -7,9 +7,10 @@ author 'lilfraae'
 description 'Oxy Runs script '
 version 'a_0.0.1'
 
-shared_script {
-	'@es_extended/imports.lua',
-	'config.lua',
+shared_scripts {
+    '@es_extended/locale.lua',
+    'locales/*.lua',
+    'config.lua',
 }
 
 server_scripts {
@@ -19,3 +20,5 @@ server_scripts {
 client_scripts {
 	'client/main.lua'
 }
+
+dependency 'es_extended'
