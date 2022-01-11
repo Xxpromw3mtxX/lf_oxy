@@ -2,6 +2,7 @@ ESX = nil
 
 --PED info
 local oxyPed
+local deliveryPed
 
 --local variables
 local randomPed = 1
@@ -9,10 +10,15 @@ local randomDelivery = 1
 local randomPedSeller = 1
 local randomPedDelivery = 1
 local hasStarted = false
+local vehicle
+local vehicleHash
+local randomModel
+local drive
+local randomVehModle
+local driveType
 
 --items amounts
 local suspicious
-local recoveries
 local maxRewardOxy
 
 --blip
@@ -24,6 +30,11 @@ AddEventHandler('onResourceStop', function(resourceName)
 	if (GetCurrentResourceName() == resourceName) then
 		DeletePed(oxyPed)
         SetPedAsNoLongerNeeded(oxyPed)
+
+		DeletePed(deliveryPed)
+        SetPedAsNoLongerNeeded(deliveryPed)
+
+		DeleteVehicle(vehicle)
 	end
 end)
 
@@ -72,11 +83,50 @@ function setWaypoint(coords, bName)
 end
 
 function generateDelivery()
-	randomDelivery = math.random(1, #Config.deliveryPoints)
 	randomPedDelivery = math.random(1, #Config.pedModels)
+	randomModel = math.random(1, #Config.vehicleModels)
+	drive = math.random(1, #Config.vehicleDriveType)
 
-	setWaypoint(Config.deliveryPoints[randomDelivery], _U('exchange'))
+	randomVehModle = Config.vehicleModels[randomModel]
+	driveType = Config.vehicleDriveType[drive]
+
+	--ped
+	RequestModel(GetHashKey(Config.pedModels[randomPedDelivery].model))
+	while not HasModelLoaded(GetHashKey(Config.pedModels[randomPedDelivery].model)) do
+		Citizen.Wait(1)
+	end
 	
+	if not DoesEntityExist(deliveryPed) then
+		deliveryPed = CreatePed(Config.pedModels[randomPedDelivery].type, Config.pedModels[randomPedDelivery].model, -1297.291, -203.3148, 59.75965, 0.0, false, true)
+		SetEntityInvincible(deliveryPed, true)
+	end
+	
+	SetModelAsNoLongerNeeded(Config.pedModels[randomPedDelivery].model)
+	--end ped section
+
+	exports['qtarget']:AddTargetModel({Config.sellerPed[randomPedSeller].model}, {
+		options = {
+			{
+				event = "atlantis_oxy:addPackage",
+				icon = "fas fa-box",
+				label = _U('recoverPacket'),
+				num = 1
+			}
+		},
+		distance = Config.interactDistances
+	})
+	
+	setWaypoint(Config.deliveryPoints[randomDelivery], _U('exchange'))
+
+	vehicleHash = GetHashKey(randomVehModle)
+	RequestModel(vehicleHash)
+	vehicle = CreateVehicle(vehicleHash, -1298.37, -204.0942, 59.95965, 0.0, true, true)
+
+	SetEntityAsMissionEntity(vehicle, true, true)
+
+	TaskEnterVehicle(deliveryPed, vehicle, 10000, -1, 50, 1, 0)
+
+	TaskVehicleDriveToCoord(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.pedVehiclemSpeed, 1.0, GetEntityModel(vehicle), driveType, 1.0, true)
 end
 
 RegisterNetEvent('atlantis_oxy:initOxy')
@@ -92,9 +142,9 @@ RegisterNetEvent('atlantis_oxy:startOxy')
 AddEventHandler('atlantis_oxy:startOxy', function()
 	randomPed = math.random(1, #Config.npcLocations)
 	randomPedSeller = math.random(1, #Config.sellerPed)
+	randomDelivery = math.random(1, #Config.deliveryPoints)
 	
 	suspicious = math.random(1, Config.maxStartItem)
-	recoveries = suspicious
 	maxRewardOxy = math.random(1, Config.maxOxy)
 
 	hasStarted = not hasStarted
@@ -134,12 +184,14 @@ Citizen.CreateThread(function()
 			exports.qtarget:RemoveTargetModel({Config.sellerPed[randomPedSeller].model}, {
 				_U('recoverPacket')
 			})
+
 			Citizen.Wait(60000)
 			removeNPC()
 		end
 
-		if hasStarted and recoveries ~= 0 and suspicious == 0 then
-			generateDelivery()
+		local deliveryDistance = GetDistanceBetweenCoords(coords, Config.deliveryPoints[randomDelivery], false)
+		if hasStarted and deliveryDistance < 5 then
+			RemoveBlip(oxyBlips)
 		end
 	end
 end)
