@@ -44,6 +44,24 @@ Config.deliveryPoints = {
     vector3(-227.40120, -1486.49900, 30.79996),
 }
 
+--Ped vehicle model, drive types and max speed
+Config.vehicleModels = {
+    'washington',
+    'gauntlet',
+    'glendale',
+    'panto',
+    'sultan',
+}
+
+Config.vehicleDriveType = {
+    1074528293, --Rushed
+    786603, --Normal
+    2883621, --Ignore Lights
+    5, --Sometimes Overtake Traffic
+}
+
+Config.pedVehiclemSpeed = 130.0
+
 --Ped models
 Config.sellerPed = {
     {
