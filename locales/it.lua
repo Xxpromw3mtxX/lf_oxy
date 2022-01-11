@@ -1,3 +1,3 @@
 Locales['it'] = {
-    ['test'] = 'test',
+    ['oRecovery'] = 'Recupero pacchetti',
 }
