@@ -4,6 +4,27 @@ TriggerEvent('esx:getSharedObject', function(obj)
     ESX = obj 
 end)
 
+RegisterServerEvent('atlantis_oxy:clearMoney')
+AddEventHandler('atlantis_oxy:clearMoney', function(mAccount, mAmount)
+    local xPlayer = ESX.GetPlayerFromId(source)
+
+    local xAccount = xPlayer.getAccount(mAccount).money
+
+    if xAccount >= mAmount then
+        xPlayer.removeAccountMoney(mAccount, mAmount)
+        TriggerClientEvent('atlantis_oxy:startOxy', source)
+    else
+        TriggerClientEvent('mythic_notify:client:SendAlert', source, {type = 'error', text = _U('not_enough_bmoney'), length = 2500})
+    end
+end)
+
+RegisterServerEvent('atlantis_oxy:itemAdder')
+AddEventHandler('atlantis_oxy:itemAdder', function(iName)
+    local xPlayer = ESX.GetPlayerFromId(source)
+
+    xPlayer.addInventoryItem(iName, 1)
+end)
+
 -- Version Checker
 PerformHttpRequest("https://raw.githubusercontent.com/xxpromw3mtxx/atlantis_oxy/main/.version", function(err, text, headers)
     Citizen.Wait(2000)
