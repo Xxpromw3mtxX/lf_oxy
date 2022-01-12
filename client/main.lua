@@ -133,6 +133,9 @@ function abortOxy(giveMoneyBack)
 
 	DeleteVehicle(vehicle)
 
+	hasStarted = not hasStarted
+	RemoveBlip(oxyBlips)
+
 	TriggerServerEvent('atlantis_oxy:removeStash', Config.startItem, Config.mAccount, Config.startAmount, giveMoneyBack)
 
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('mission_cancelled'), length = 2500})
