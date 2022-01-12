@@ -178,20 +178,13 @@ Citizen.CreateThread(function()
 				},
 				distance = Config.interactDistances
 			})
-		end
-
-		if hasStarted and suspicious == 0 then
+		elseif hasStarted and suspicious == 0 then
 			exports.qtarget:RemoveTargetModel({Config.sellerPed[randomPedSeller].model}, {
 				_U('recoverPacket')
 			})
-
-			Citizen.Wait(60000)
+			generateDelivery()
+			Citizen.Wait(20000)
 			removeNPC()
-		end
-
-		local deliveryDistance = GetDistanceBetweenCoords(coords, Config.deliveryPoints[randomDelivery], false)
-		if hasStarted and deliveryDistance < 5 then
-			RemoveBlip(oxyBlips)
 		end
 	end
 end)
