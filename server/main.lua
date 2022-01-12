@@ -40,7 +40,7 @@ AddEventHandler('atlantis_oxy:giveOxy', function(sPackage, dOxy)
         xPlayer.removeInventoryItem(sPackage, 1)
         xPlayer.addInventoryItem(dOxy, finalOxy)
         TriggerClientEvent('atlantis_oxy:driveAway', source)
-        TriggerClientEvent('mythic_notify:client:SendAlert', source, {type = 'inform', text = _U('another_buyer'), length = 2500})
+        TriggerClientEvent('mythic_notify:client:SendAlert', source, {type = 'inform', text = _U('new_position'), length = 2500})
         TriggerClientEvent('atlantis_oxy:waitTime', source)
     elseif xPackage == 1 then
         xPlayer.removeInventoryItem(sPackage, 1)
