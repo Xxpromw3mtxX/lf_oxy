@@ -13,6 +13,7 @@ local hasStarted = false
 local vehicle
 local randomModel
 local drive
+local cooldown = 0
 
 --items amounts
 local suspicious
@@ -134,10 +135,14 @@ end
 --events
 RegisterNetEvent('atlantis_oxy:initOxy')
 AddEventHandler('atlantis_oxy:initOxy', function()
-	if Config.usebMoney then
-		TriggerServerEvent('atlantis_oxy:clearMoney', Config.mAccount, Config.startAmount)
+	if cooldown <= 0 then
+		if Config.usebMoney then
+			TriggerServerEvent('atlantis_oxy:clearMoney', Config.mAccount, Config.startAmount)
+		else
+			TriggerEvent('atlantis_oxy:startOxy')
+		end
 	else
-		TriggerEvent('atlantis_oxy:startOxy')
+		TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('cooldown', math.ceil(cooldown/1000)), length = 2500})
 	end
 end)
 
@@ -150,7 +155,8 @@ AddEventHandler('atlantis_oxy:startOxy', function()
 	maxRewardOxy = math.random(1, Config.maxOxy)
 
 	hasStarted = not hasStarted
-
+	cooldown = Config.CooldownMinutes * 60000
+	
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('oxyHasStarted'), length = 2500})
 
 	setWaypoint(Config.npcLocations[randomPed].position, _U('oRecovery'))
