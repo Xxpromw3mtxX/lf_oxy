@@ -9,6 +9,7 @@ Oxy Runs script - Clean dirty money and get cash for doing it.
 ## Requirements
 * Required:
     * [ESX](https://github.com/esx-framework/esx-legacy/tree/main/%5Besx%5D)
+    * [qtarget](https://github.com/overextended/qtarget)
 * Optional:
     * None
 
