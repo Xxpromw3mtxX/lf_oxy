@@ -124,7 +124,9 @@ function generateDelivery()
 	TaskVehicleDriveToCoord(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.pedVehiclemSpeed, 1.0, GetEntityModel(vehicle), Config.dType, 1.0, true)
 end
 
-function abortOxy(giveMoneyBack)
+function cancelOxy(giveMoneyBack)
+	RemoveBlip(oxyBlips)
+
 	DeletePed(oxyPed)
     SetPedAsNoLongerNeeded(oxyPed)
 
@@ -134,7 +136,6 @@ function abortOxy(giveMoneyBack)
 	DeleteVehicle(vehicle)
 
 	hasStarted = not hasStarted
-	RemoveBlip(oxyBlips)
 
 	TriggerServerEvent('atlantis_oxy:removeStash', Config.startItem, Config.mAccount, Config.startAmount, giveMoneyBack)
 
@@ -219,6 +220,10 @@ AddEventHandler('atlantis_oxy:resetFlag', function()
 	hasStarted = not hasStarted
 end)
 
+AddEventHandler('atlantis_oxy:cancelOxy', function()
+	cancelOxy(true)
+end)
+
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(Config.TickTime)
@@ -231,6 +236,12 @@ Citizen.CreateThread(function()
 						icon = "fas fa-box",
 						label = _U('recoverPacket'),
 						num = 1
+					},
+					{
+						event = "atlantis_oxy:cancelOxy",
+						icon = "fas fa-times",
+						label = _U('cancel'),
+						num = 2
 					}
 				},
 				distance = Config.interactDistance
@@ -264,7 +275,7 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(Config.TickTime)
 
-		--get player coords
+		--get player coords and pedID
 		local coords = GetEntityCoords(GetPlayerPed(-1))
 
 		--if the mission has started, the distance between the player and the first location is lower than 10 and the packages are different from 0, removed the current blip
@@ -278,8 +289,8 @@ Citizen.CreateThread(function()
 		end
 
 		--if player dies, mission is aborted and loses all the money and stash
-		if hasStarted and IsPlayerDead(GetPlayerPed(-1)) then
-			abortOxy(false)
+		if hasStarted and IsEntityDead(GetPlayerPed(-1)) then
+			cancelOxy(false)
 		end
 	end
 end)
