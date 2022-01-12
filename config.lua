@@ -11,6 +11,9 @@ Config.usebMoney = true
 Config.mAccount = 'black_money'
 Config.startAmount = 1500
 
+--Cooldown time
+Config.CooldownMinutes = 10
+
 --Start item
 Config.startItem = 'suspicious_package'
 Config.maxStartItem = 3
@@ -29,11 +32,11 @@ Config.npcLocations = {
 
 --Suspicious package delivery
 Config.deliveryPoints = {
-    --[[vector3(969.77990, -1557.03700, 30.20764),
+    vector3(969.77990, -1557.03700, 30.20764),
     vector3(-173.59390, -1975.40200, 27.14530),
     vector3(-777.35500, 373.81520, 87.35204),
     vector3(-939.38060, 309.26740, 70.67439),
-    vector3(-227.40120, -1486.49900, 30.79996),]]
+    vector3(-227.40120, -1486.49900, 30.79996),
     vector3(217.7, -166.3, 56.6),
 }
 
