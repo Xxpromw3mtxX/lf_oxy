@@ -5,7 +5,7 @@ game 'gta5'
 name 'atlantis_oxy'
 author 'lilfraae'
 description 'Oxy Runs script '
-version 'a_0.0.1'
+version 'a_0.1.1'
 
 shared_scripts {
     '@es_extended/locale.lua',
