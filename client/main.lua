@@ -100,6 +100,9 @@ function generateDelivery()
 	--setting the waypoint
 	setWaypoint(Config.deliveryPoints[randomDelivery], _U('exchange'))
 
+	--send noti
+	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('bComing'), length = 2500})
+
 	--spawning the vehicle
 	RequestModel(ModelHash)
 	while not HasModelLoaded(ModelHash) do -- Waits for the model to load with a check so it does not get stuck in an infinite loop
