@@ -32,11 +32,10 @@ Config.npcLocations = {
 
 --Suspicious package delivery
 Config.deliveryPoints = {
-    vector3(969.77990, -1557.03700, 30.20764),
-    vector3(-173.59390, -1975.40200, 27.14530),
-    vector3(-777.35500, 373.81520, 87.35204),
-    vector3(-939.38060, 309.26740, 70.67439),
-    vector3(-227.40120, -1486.49900, 30.79996),
+    vector3(969.8, -1557, 31.2),
+    vector3(-179.4, -1976.6, 27.6),
+    vector3(-775.4, 362, 87.9),
+    vector3(-222.6, -1483.3, 31.3),
     vector3(217.7, -166.3, 56.6),
 }
 
@@ -51,7 +50,7 @@ Config.vehicleModels = {
 
 Config.dType = 786603 --Normal
 
-Config.pedVehiclemSpeed = 10.0
+Config.pedVehiclemSpeed = 80.0
 
 --Peds
 Config.peds = {
