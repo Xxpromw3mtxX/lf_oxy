@@ -36,6 +36,16 @@ AddEventHandler('onResourceStop', function(resourceName)
 	end
 end)
 
+--Cooldown manager
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(5000)
+		if cooldown > 0 then
+			cooldown = cooldown - 5000
+		end
+	end
+end)
+
 --esx thread
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -121,7 +131,7 @@ function generateDelivery()
 	SetPedIntoVehicle(deliveryPed, vehicle, -1)
 
 	--ped drives to the position
-	TaskVehicleDriveToCoord(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.pedVehiclemSpeed, 1.0, GetEntityModel(vehicle), Config.dType, 1.0, true)
+	TaskVehicleDriveToCoordLongrange(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.pedVehiclemSpeed, Config.dType, 1.0)
 end
 
 function cancelOxy(giveMoneyBack)
@@ -205,7 +215,7 @@ AddEventHandler('atlantis_oxy:exchangePackage', function()
 	exports.qtarget:RemoveVehicle({
 		_U('deliver_pack')
 	})
-
+	
 	TriggerServerEvent('atlantis_oxy:giveOxy', Config.startItem, Config.rewardItem)
 end)
 
