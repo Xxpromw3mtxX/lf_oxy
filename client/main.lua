@@ -91,11 +91,11 @@ function generateDelivery()
 		Citizen.Wait(1)
 	end
 	if not DoesEntityExist(deliveryPed) then
-		deliveryPed = CreatePed(Config.peds.buyers[randomPedDelivery].type, pedModel, 264.4, -188.3, 61.6, 159.18, false, true)
+		deliveryPed = CreatePed(Config.peds.buyers[randomPedDelivery].type, pedModel, 264.4, -188.3, 60.6, 159.18, false, true)
 		SetEntityInvincible(deliveryPed, true)
+		SetBlockingOfNonTemporaryEvents(deliveryPed, true)
 	end
 	SetModelAsNoLongerNeeded(pedModel)
-	SetBlockingOfNonTemporaryEvents(deliveryPed, true)
 	
 	--setting the waypoint
 	setWaypoint(Config.deliveryPoints[randomDelivery], _U('exchange'))
@@ -111,14 +111,14 @@ function generateDelivery()
 	while not HasModelLoaded(ModelHash) do -- Waits for the model to load with a check so it does not get stuck in an infinite loop
 		Citizen.Wait(10)
 	end
-	vehicle = CreateVehicle(ModelHash, 275.4, -194.2, 61.6, 341.7, false, true)
+	vehicle = CreateVehicle(ModelHash, 361.9, -78.1, 67.3, 248.79, false, true)
 	SetModelAsNoLongerNeeded(ModelHash)
 	SetEntityAsMissionEntity(vehicle, true, true)
 	local randomPlate = (math.random(0,9)*10000000)+(math.random(0,9)*1000000)+(math.random(0,9)*100000)+(math.random(0,9)*10000)+(math.random(0,9)*1000)+(math.random(0,9)*100)+(math.random(0,9)*10)+(math.random(0,9))
 	SetVehicleNumberPlateText(vehicle, randomPlate)
 
 	--ped goes inside the vehicle
-	TaskWarpPedIntoVehicle(deliveryPed, vehicle, -1)
+	SetPedIntoVehicle(deliveryPed, vehicle, -1)
 
 	--ped drives to the position
 	TaskVehicleDriveToCoord(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.pedVehiclemSpeed, 1.0, GetEntityModel(vehicle), Config.dType, 1.0, true)
@@ -248,7 +248,7 @@ Citizen.CreateThread(function()
 			})
 		elseif hasStarted and suspicious == 0 then
 			exports.qtarget:RemoveTargetModel({Config.peds.sellers[randomPedSeller].model}, {
-				_U('recoverPacket')
+				_U('recoverPacket'), _U('cancel')
 			})
 			Citizen.Wait(20000)
 			DeletePed(oxyPed)

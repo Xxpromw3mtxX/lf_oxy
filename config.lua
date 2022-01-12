@@ -50,7 +50,7 @@ Config.vehicleModels = {
 
 Config.dType = 786603 --Normal
 
-Config.pedVehiclemSpeed = 80.0
+Config.pedVehiclemSpeed = 30.0
 
 --Peds
 Config.peds = {
