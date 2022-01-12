@@ -1,6 +1,6 @@
 Locales['it'] = {
     ['oRecovery'] = 'Recupero pacchetti',
-    ['recoverPacket'] = 'Rcupera pacchetto',
+    ['recoverPacket'] = 'Recupera pacchetto',
     ['not_enough_bmoney'] = 'Non hai abbastanza soldi!',
     ['oxyHasStarted'] = 'Hai cominciato il lavoro.',
     ['gpsSetted'] = 'Impostata la destinazione sul GPS.',
