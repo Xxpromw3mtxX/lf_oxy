@@ -91,7 +91,7 @@ function generateDelivery()
 		Citizen.Wait(1)
 	end
 	if not DoesEntityExist(deliveryPed) then
-		deliveryPed = CreatePed(Config.peds.buyers[randomPedDelivery].type, pedModel, 216.2, -22.5, 69.7, 161.32, false, true)
+		deliveryPed = CreatePed(Config.peds.buyers[randomPedDelivery].type, pedModel, 264.4, -188.3, 61.6, 159.18, false, true)
 		SetEntityInvincible(deliveryPed, true)
 	end
 	SetModelAsNoLongerNeeded(pedModel)
@@ -103,12 +103,15 @@ function generateDelivery()
 	--send noti
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('bComing'), length = 2500})
 
+	--set driver ability
+	SetDriverAbility(deliveryPed, 1.0)
+
 	--spawning the vehicle
 	RequestModel(ModelHash)
 	while not HasModelLoaded(ModelHash) do -- Waits for the model to load with a check so it does not get stuck in an infinite loop
 		Citizen.Wait(10)
 	end
-	vehicle = CreateVehicle(ModelHash, 211.9, -25.1, 69.7, 157.42, false, true)
+	vehicle = CreateVehicle(ModelHash, 275.4, -194.2, 61.6, 341.7, false, true)
 	SetModelAsNoLongerNeeded(ModelHash)
 	SetEntityAsMissionEntity(vehicle, true, true)
 	local randomPlate = (math.random(0,9)*10000000)+(math.random(0,9)*1000000)+(math.random(0,9)*100000)+(math.random(0,9)*10000)+(math.random(0,9)*1000)+(math.random(0,9)*100)+(math.random(0,9)*10)+(math.random(0,9))
