@@ -26,6 +26,7 @@ end)
     event that add the item to the player stash,
     and starts the packages recovery
     @iName - item name
+    @iQuantity - item quantity
 ]]
 RegisterServerEvent('atlantis_oxy:invAdder')
 AddEventHandler('atlantis_oxy:invAdder', function(iName, iQuantity)
@@ -52,14 +53,16 @@ AddEventHandler('atlantis_oxy:packageToOxy', function(sPackage, dOxy)
         xPlayer.removeInventoryItem(sPackage, 1)
         xPlayer.addInventoryItem(dOxy, finalOxy)
         TriggerClientEvent('atlantis_oxy:driveAway', source)
-        TriggerClientEvent('mythic_notify:client:SendAlert', source, {type = 'inform', text = _U('new_position'), length = 2500})
+        TriggerClientEvent('mythic_notify:client:SendAlert', source, {type = 'inform', text = _U('another_buyer'), length = 2500})
         TriggerClientEvent('atlantis_oxy:waitTime', source)
     elseif xPackage == 1 then
         xPlayer.removeInventoryItem(sPackage, 1)
         xPlayer.addInventoryItem(dOxy, finalOxy)
+        TriggerClientEvent('atlantis_oxy:driveAway', source)
+
         local clearedMoney = math.floor((Config.startAmount*15)/2.05)
         xPlayer.addAccountMoney('money', clearedMoney)
-        TriggerClientEvent('atlantis_oxy:driveAway', source)
+        
         TriggerClientEvent('mythic_notify:client:SendAlert', source, {type = 'inform', text = _U('jComplted', clearedMoney), length = 2500})
         TriggerClientEvent('atlantis_oxy:resetFlag', source)
     else
@@ -68,10 +71,11 @@ AddEventHandler('atlantis_oxy:packageToOxy', function(sPackage, dOxy)
 end)
 
 --[[
+    this event works only if the player drops the job or dies
     @sPackage: package item name
     @mAccount: money account name
     @mAmount: money amount
-    @mBack: money back
+    @mBack: money back (boolean)
 ]]
 RegisterServerEvent('atlantis_oxy:removeStash')
 AddEventHandler('atlantis_oxy:removeStash', function(sPackage, mAccount, mAmount, mBack)
