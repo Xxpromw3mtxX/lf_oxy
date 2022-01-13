@@ -54,23 +54,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
---functions
-function createNPC(pType, pModel, location, heading, isNetwork, bScriptHostPed)
-	RequestModel(GetHashKey(pModel))
-	while not HasModelLoaded(GetHashKey(pModel)) do
-		Citizen.Wait(1)
-	end
-
-    if not DoesEntityExist(oxyPed) then
-		oxyPed = CreatePed(pType, pModel, location, heading, isNetwork, bScriptHostPed)
-		FreezeEntityPosition(oxyPed, true)
-		SetEntityInvincible(oxyPed, true)
-		SetBlockingOfNonTemporaryEvents(oxyPed, true)
-		TaskStartScenarioInPlace(oxyPed, "WORLD_HUMAN_COP_IDLES", 0, true)
-	end
-	SetModelAsNoLongerNeeded(pModel)
-end
-
+--waypoint setter function
 function setWaypoint(coords, bName)
 	oxyBlips = AddBlipForCoord(coords)
 	SetBlipSprite(oxyBlips, 1)
@@ -87,63 +71,23 @@ function setWaypoint(coords, bName)
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('gpsSetted'), length = 2500})
 end
 
-function generateDelivery()
-	randomDelivery = math.random(1, #Config.deliveryPoints)
-	randomPedDelivery = math.random(1, #Config.peds.buyers)
-	randomModel = math.random(1, #Config.vehicleModels)
-
-	local ModelHash = GetHashKey(Config.vehicleModels[randomModel])
-	local pedModel = Config.peds.buyers[randomPedDelivery].model
-
-	--ped
-	RequestModel(GetHashKey(pedModel))
-	while not HasModelLoaded(GetHashKey(pedModel)) do
-		Citizen.Wait(1)
-	end
-	if not DoesEntityExist(deliveryPed) then
-		deliveryPed = CreatePed(Config.peds.buyers[randomPedDelivery].type, pedModel, 264.4, -188.3, 60.6, 159.18, false, true)
-		SetEntityInvincible(deliveryPed, true)
-		SetBlockingOfNonTemporaryEvents(deliveryPed, true)
-	end
-	SetModelAsNoLongerNeeded(pedModel)
-	
-	--setting the waypoint
-	setWaypoint(Config.deliveryPoints[randomDelivery], _U('exchange'))
-
-	--send noti
-	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('bComing'), length = 2500})
-
-	--set driver ability
-	SetDriverAbility(deliveryPed, 1.0)
-
-	--spawning the vehicle
-	RequestModel(ModelHash)
-	while not HasModelLoaded(ModelHash) do -- Waits for the model to load with a check so it does not get stuck in an infinite loop
-		Citizen.Wait(10)
-	end
-	vehicle = CreateVehicle(ModelHash, 361.9, -78.1, 67.3, 248.79, false, true)
-	SetModelAsNoLongerNeeded(ModelHash)
-	SetEntityAsMissionEntity(vehicle, true, true)
-	local randomPlate = (math.random(0,9)*10000000)+(math.random(0,9)*1000000)+(math.random(0,9)*100000)+(math.random(0,9)*10000)+(math.random(0,9)*1000)+(math.random(0,9)*100)+(math.random(0,9)*10)+(math.random(0,9))
-	SetVehicleNumberPlateText(vehicle, randomPlate)
-
-	--ped goes inside the vehicle
-	SetPedIntoVehicle(deliveryPed, vehicle, -1)
-
-	--ped drives to the position
-	TaskVehicleDriveToCoordLongrange(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.pedVehiclemSpeed, Config.dType, 1.0)
-end
-
+--mission abort function
 function cancelOxy(giveMoneyBack)
 	RemoveBlip(oxyBlips)
 
-	DeletePed(oxyPed)
-    SetPedAsNoLongerNeeded(oxyPed)
+	if DoesEntityExist(oxyPed) then
+		DeletePed(oxyPed)
+		SetPedAsNoLongerNeeded(oxyPed)
+	end
 
-	DeletePed(deliveryPed)
-    SetPedAsNoLongerNeeded(deliveryPed)
+	if DoesEntityExist(oxyPed) then
+		DeletePed(deliveryPed)
+		SetPedAsNoLongerNeeded(deliveryPed)
+	end
 
-	DeleteVehicle(vehicle)
+	if DoesEntityExist(vehicle) then
+		DeleteVehicle(vehicle)
+	end
 
 	hasStarted = not hasStarted
 
@@ -152,12 +96,12 @@ function cancelOxy(giveMoneyBack)
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('mission_cancelled'), length = 2500})
 end
 
---events
+--initialization events
 RegisterNetEvent('atlantis_oxy:initOxy')
 AddEventHandler('atlantis_oxy:initOxy', function()
 	if cooldown <= 0 then
 		if Config.usebMoney then
-			TriggerServerEvent('atlantis_oxy:clearMoney', Config.mAccount, Config.startAmount)
+			TriggerServerEvent('atlantis_oxy:checkMoney', Config.mAccount, Config.startAmount)
 		else
 			TriggerEvent('atlantis_oxy:startOxy')
 		end
@@ -180,65 +124,87 @@ AddEventHandler('atlantis_oxy:startOxy', function()
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('oxyHasStarted'), length = 2500})
 
 	setWaypoint(Config.npcLocations[randomPed].position, _U('oRecovery'))
-	createNPC(Config.peds.sellers[randomPedSeller].type, Config.peds.sellers[randomPedSeller].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false, true)
-end)
 
-AddEventHandler('atlantis_oxy:addPackage', function()
-	suspicious = suspicious - 1
-
-	TriggerServerEvent('atlantis_oxy:itemAdder', Config.startItem)
-
-	if suspicious == 0 then
-		TriggerEvent('atlantis_oxy:initPRecovery')
+	RequestModel(GetHashKey(Config.peds.sellers[randomPedSeller].model))
+	while not HasModelLoaded(GetHashKey(Config.peds.sellers[randomPedSeller].model)) do
+		Citizen.Wait(1)
 	end
+
+    if not DoesEntityExist(oxyPed) then
+		oxyPed = CreatePed(Config.peds.sellers[randomPedSeller].type, Config.peds.sellers[randomPedSeller].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false, false)
+		FreezeEntityPosition(oxyPed, true)
+		SetEntityInvincible(oxyPed, true)
+		SetBlockingOfNonTemporaryEvents(oxyPed, true)
+		TaskStartScenarioInPlace(oxyPed, "WORLD_HUMAN_COP_IDLES", 0, true)
+	end
+	SetModelAsNoLongerNeeded(Config.peds.sellers[randomPedSeller].model)
 end)
 
-RegisterNetEvent('atlantis_oxy:initPRecovery')
-AddEventHandler('atlantis_oxy:initPRecovery', function()
-	generateDelivery()
-end)
+--main event
+RegisterNetEvent('atlantis_oxy:packageRecovery')
+AddEventHandler('atlantis_oxy:packageRecovery', function()
+	randomDelivery = math.random(1, #Config.deliveryPoints)
+	randomPedDelivery = math.random(1, #Config.peds.buyers)
+	randomModel = math.random(1, #Config.vehicleModels)
 
-RegisterNetEvent('atlantis_oxy:driveAway')
-AddEventHandler('atlantis_oxy:driveAway', function()
-	TaskVehicleDriveToCoord(deliveryPed, vehicle, 489.8, -51.0, 89.4, Config.pedVehiclemSpeed, 1.0, GetEntityModel(vehicle), Config.dType, 1.0, true)
+	--setting the waypoint
+	setWaypoint(Config.deliveryPoints[randomDelivery], _U('exchange'))
 
-	Citizen.Wait(20000)
-
-	DeletePed(deliveryPed)
-    SetPedAsNoLongerNeeded(deliveryPed)
-
-	DeleteVehicle(vehicle)
-end)
-
-AddEventHandler('atlantis_oxy:exchangePackage', function()
-	--disable qtarget
-	exports.qtarget:RemoveVehicle({
-		_U('deliver_pack')
-	})
+	--generate ped
+	local pedModel = Config.peds.buyers[randomPedDelivery].model
+	local pedType = Config.peds.buyers[randomPedDelivery].type
+	local pedHash = GetHashKey(Config.peds.buyers[randomPedDelivery].model)
 	
-	TriggerServerEvent('atlantis_oxy:giveOxy', Config.startItem, Config.rewardItem)
+	RequestModel(pedHash)
+	while not HasModelLoaded(pedHash) do
+		Citizen.Wait(10)
+	end
+
+	if not DoesEntityExist(deliveryPed) then
+		deliveryPed = CreatePed(pedType, pedModel, 352.7, -142.4, 66.7, 339.2, false, false)
+		SetEntityInvincible(deliveryPed, true)
+		SetBlockingOfNonTemporaryEvents(deliveryPed, true)
+		SetEntityAsMissionEntity(deliveryPed, true, true)
+	end
+
+	SetModelAsNoLongerNeeded(pedModel)
+
+	--generate vehicle
+	local vehicleModel = Config.vehicleModels[randomModel]
+	local vehicleHash = GetHashKey(Config.vehicleModels[randomModel])
+
+	RequestModel(vehicleHash)
+	while not HasModelLoaded(vehicleHash) do
+		Citizen.Wait(10)
+	end
+
+	if not DoesEntityExist(vehicle) then
+		vehicle = CreateVehicle(vehicleHash, 351.6, -131.0, 66.2, 339.51, false, false)
+		SetVehicleNumberPlateText(vehicle, _U('custom_plate'))
+		SetEntityAsMissionEntity(vehicle, true, true)
+	end
+
+	SetModelAsNoLongerNeeded(vehicleModel)
+
+	--ped enters the vehicle
+	TaskWarpPedIntoVehicle(deliveryPed, vehicle, -1)
+
+	--ped drives to the desired location
+	TaskVehicleDriveToCoordLongrange(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.vehSpeed, Config.dType, 1.0)
 end)
 
 RegisterNetEvent('atlantis_oxy:waitTime')
 AddEventHandler('atlantis_oxy:waitTime', function()
 	Citizen.Wait(20000)
-	TriggerEvent('atlantis_oxy:initPRecovery')
+	TriggerEvent('atlantis_oxy:packageRecovery')
 end)
 
-RegisterNetEvent('atlantis_oxy:resetFlag')
-AddEventHandler('atlantis_oxy:resetFlag', function()
-	hasStarted = not hasStarted
-end)
-
-AddEventHandler('atlantis_oxy:cancelOxy', function()
-	cancelOxy(true)
-end)
-
+--main thread
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(Config.TickTime)
-
-		if hasStarted and suspicious ~= 0 then
+		
+		if hasStarted and DoesEntityExist(oxyPed) and suspicious ~= 0 then
 			exports['qtarget']:AddTargetModel({Config.peds.sellers[randomPedSeller].model}, {
 				options = {
 					{
@@ -260,9 +226,10 @@ Citizen.CreateThread(function()
 			exports.qtarget:RemoveTargetModel({Config.peds.sellers[randomPedSeller].model}, {
 				_U('recoverPacket'), _U('cancel')
 			})
+
 			Citizen.Wait(20000)
 			DeletePed(oxyPed)
-    		SetPedAsNoLongerNeeded(oxyPed)
+			SetPedAsNoLongerNeeded(oxyPed)
 		end
 		
 		if hasStarted and DoesEntityExist(deliveryPed) then
@@ -281,6 +248,59 @@ Citizen.CreateThread(function()
 	end
 end)
 
+--first thread related events
+AddEventHandler('atlantis_oxy:addPackage', function()
+	TriggerServerEvent('atlantis_oxy:invAdder', Config.startItem, suspicious)
+	suspicious = 0
+end)
+
+AddEventHandler('atlantis_oxy:cancelOxy', function()
+	cancelOxy(true)
+end)
+
+AddEventHandler('atlantis_oxy:exchangePackage', function()
+	--disable qtarget
+	exports.qtarget:RemoveVehicle({
+		_U('deliver_pack')
+	})
+	
+	TriggerServerEvent('atlantis_oxy:packageToOxy', Config.startItem, Config.rewardItem)
+end)
+
+--ped related events
+RegisterNetEvent('atlantis_oxy:driveAway')
+AddEventHandler('atlantis_oxy:driveAway', function()
+	TaskVehicleDriveToCoordLongrange(deliveryPed, vehicle, 489.8, -51.0, 89.4, Config.vehSpeed, Config.dType, 1.0)
+
+	Citizen.Wait(20000)
+
+	DeletePed(deliveryPed)
+    SetPedAsNoLongerNeeded(deliveryPed)
+
+	DeleteVehicle(vehicle)
+end)
+
+--reset
+RegisterNetEvent('atlantis_oxy:resetFlag')
+AddEventHandler('atlantis_oxy:resetFlag', function()
+	hasStarted = not hasStarted
+	
+	if DoesEntityExist(oxyPed) then
+		DeletePed(oxyPed)
+		SetPedAsNoLongerNeeded(oxyPed)
+	end
+
+	if DoesEntityExist(oxyPed) then
+		DeletePed(deliveryPed)
+		SetPedAsNoLongerNeeded(deliveryPed)
+	end
+
+	if DoesEntityExist(vehicle) then
+		DeleteVehicle(vehicle)
+	end
+end)
+
+--positions related thread
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(Config.TickTime)
@@ -301,6 +321,6 @@ Citizen.CreateThread(function()
 		--if player dies, mission is aborted and loses all the money and stash
 		if hasStarted and IsEntityDead(GetPlayerPed(-1)) then
 			cancelOxy(false)
-		end
+		end 
 	end
 end)
