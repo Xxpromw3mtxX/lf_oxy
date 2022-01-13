@@ -1,29 +1,26 @@
 ESX = nil
-
 --PED info
 local oxyPed
 local deliveryPed
-
 --local variables
 local randomPed = 1
-local randomDelivery = 1
-local randomPedSeller = 1
-local randomPedDelivery = 1
-local hasStarted = false
-local vehicle
-local randomModel
-local drive
-local cooldown = 0
-
+local randomPedSeller = 1											--Do i really need to explain this part to you?
+local randomPedDelivery = 1											--Could we have less variables? Maybe... maybe....
+local hasStarted = false											--Do you think i have the time and the will to do it?
+local vehicle														--Absolutely not
+local randomModel													--Enjoy my man <3 (lilfraae/Xxpromw3mtxX)
+local drive															
 --items amounts
 local suspicious
 local maxRewardOxy
-
 --blip
 local oxyBlips
 
-
--- Delete PED on resource stop
+--[[
+	as i just said...
+	i'm tired
+	and yeah the comments are bottom-up KEK
+]]
 AddEventHandler('onResourceStop', function(resourceName)
 	if (GetCurrentResourceName() == resourceName) then
 		DeletePed(oxyPed)
@@ -36,17 +33,11 @@ AddEventHandler('onResourceStop', function(resourceName)
 	end
 end)
 
---Cooldown manager
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(5000)
-		if cooldown > 0 then
-			cooldown = cooldown - 5000
-		end
-	end
-end)
-
---esx thread
+--[[
+	initializes ESX variable?
+	never used tho?
+	but who knows 
+]]
 Citizen.CreateThread(function()
 	while ESX == nil do
 		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
@@ -54,7 +45,10 @@ Citizen.CreateThread(function()
 	end
 end)
 
---waypoint setter function
+--[[
+	actually you know what?
+	i'm tired to write comments, since these functions are autoexplicativo
+]]
 function setWaypoint(coords, bName)
 	oxyBlips = AddBlipForCoord(coords)
 	SetBlipSprite(oxyBlips, 1)
@@ -71,7 +65,10 @@ function setWaypoint(coords, bName)
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('gpsSetted'), length = 2500})
 end
 
---mission abort function
+--[[
+	come on...
+	it's pretty clear what this function does.
+]]
 function cancelOxy(giveMoneyBack)
 	RemoveBlip(oxyBlips)
 
@@ -96,17 +93,17 @@ function cancelOxy(giveMoneyBack)
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('mission_cancelled'), length = 2500})
 end
 
---initialization events
+--[[
+	initialization event.
+	does pretty much nothing, just checks if the player have the money to be cleaned 
+	and then the server says: <OKAYYYYYYY LES GO>, calling the underneath event.
+]]
 RegisterNetEvent('atlantis_oxy:initOxy')
 AddEventHandler('atlantis_oxy:initOxy', function()
-	if cooldown <= 0 then
-		if Config.usebMoney then
-			TriggerServerEvent('atlantis_oxy:checkMoney', Config.mAccount, Config.startAmount)
-		else
-			TriggerEvent('atlantis_oxy:startOxy')
-		end
+	if Config.usebMoney then
+		TriggerServerEvent('atlantis_oxy:checkMoney', Config.mAccount, Config.startAmount)
 	else
-		TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('cooldown', math.ceil(cooldown/1000)), length = 2500})
+		TriggerEvent('atlantis_oxy:startOxy')
 	end
 end)
 
@@ -119,7 +116,6 @@ AddEventHandler('atlantis_oxy:startOxy', function()
 	maxRewardOxy = math.random(1, Config.maxOxy)
 
 	hasStarted = not hasStarted
-	cooldown = Config.CooldownMinutes * 60000
 	
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('oxyHasStarted'), length = 2500})
 
@@ -140,15 +136,18 @@ AddEventHandler('atlantis_oxy:startOxy', function()
 	SetModelAsNoLongerNeeded(Config.peds.sellers[randomPedSeller].model)
 end)
 
---main event
+--[[
+	package recovery event, where the magic happens!
+	basically does all the remaining job.
+	generates a random ped, between the ped.buyers array,
+	a random vehicle model and then generates the ped and the vehicle.
+	the ped goes into the vehicle and then he starts to drive to the
+	desired location.
+]]
 RegisterNetEvent('atlantis_oxy:packageRecovery')
 AddEventHandler('atlantis_oxy:packageRecovery', function()
-	randomDelivery = math.random(1, #Config.deliveryPoints)
 	randomPedDelivery = math.random(1, #Config.peds.buyers)
 	randomModel = math.random(1, #Config.vehicleModels)
-
-	--setting the waypoint
-	setWaypoint(Config.deliveryPoints[randomDelivery], _U('exchange'))
 
 	--generate ped
 	local pedModel = Config.peds.buyers[randomPedDelivery].model
@@ -179,7 +178,7 @@ AddEventHandler('atlantis_oxy:packageRecovery', function()
 	end
 
 	if not DoesEntityExist(vehicle) then
-		vehicle = CreateVehicle(vehicleHash, 351.6, -131.0, 66.2, 339.51, false, false)
+		vehicle = CreateVehicle(vehicleHash, Config.deliveryPoint.pStart, Config.deliveryPoint.pHeading, false, false)
 		SetVehicleNumberPlateText(vehicle, _U('custom_plate'))
 		SetEntityAsMissionEntity(vehicle, true, true)
 	end
@@ -187,12 +186,18 @@ AddEventHandler('atlantis_oxy:packageRecovery', function()
 	SetModelAsNoLongerNeeded(vehicleModel)
 
 	--ped enters the vehicle
-	TaskWarpPedIntoVehicle(deliveryPed, vehicle, -1)
+	SetPedIntoVehicle(deliveryPed, vehicle, -1)
+
+	--setting driver ability
+	SetDriverAbility(deliveryPed, 1.0)
 
 	--ped drives to the desired location
-	TaskVehicleDriveToCoordLongrange(deliveryPed, vehicle, Config.deliveryPoints[randomDelivery], Config.vehSpeed, Config.dType, 1.0)
+	TaskVehicleDriveToCoordLongrange(deliveryPed, vehicle, Config.deliveryPoint.delPoint, Config.vehSpeed, Config.dType, 0.2)
 end)
 
+--[[
+	this is just an event that adds a timer between a recovery and a other one.
+]]
 RegisterNetEvent('atlantis_oxy:waitTime')
 AddEventHandler('atlantis_oxy:waitTime', function()
 	Citizen.Wait(20000)
@@ -252,6 +257,8 @@ end)
 AddEventHandler('atlantis_oxy:addPackage', function()
 	TriggerServerEvent('atlantis_oxy:invAdder', Config.startItem, suspicious)
 	suspicious = 0
+	--setting the waypoint
+	setWaypoint(Config.deliveryPoint.delPoint, _U('exchange'))
 end)
 
 AddEventHandler('atlantis_oxy:cancelOxy', function()
@@ -267,7 +274,10 @@ AddEventHandler('atlantis_oxy:exchangePackage', function()
 	TriggerServerEvent('atlantis_oxy:packageToOxy', Config.startItem, Config.rewardItem)
 end)
 
---ped related events
+--[[
+	this event is need to make the ped drive away from the current delivery location.
+	after 20 sec it goes into the void.
+]]
 RegisterNetEvent('atlantis_oxy:driveAway')
 AddEventHandler('atlantis_oxy:driveAway', function()
 	TaskVehicleDriveToCoordLongrange(deliveryPed, vehicle, 489.8, -51.0, 89.4, Config.vehSpeed, Config.dType, 1.0)
@@ -280,9 +290,14 @@ AddEventHandler('atlantis_oxy:driveAway', function()
 	DeleteVehicle(vehicle)
 end)
 
---reset
+--[[
+	reset event.
+	when the player has exchanged all his suspicious packages,
+	this event gets called, and after 20 sec, clear all the remainings data structures/tables/ecc....
+]]
 RegisterNetEvent('atlantis_oxy:resetFlag')
 AddEventHandler('atlantis_oxy:resetFlag', function()
+	Citizen.Wait(20000)
 	hasStarted = not hasStarted
 	
 	if DoesEntityExist(oxyPed) then
@@ -300,7 +315,10 @@ AddEventHandler('atlantis_oxy:resetFlag', function()
 	end
 end)
 
---positions related thread
+--[[
+	this thread jobs is to check if the player is near one of the delivery or recovery points, and if he's alive.
+	the ifs are working only if the job has started. 
+]]
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(Config.TickTime)
@@ -314,13 +332,13 @@ Citizen.CreateThread(function()
 		end
 
 		--remove blip if player coords and deliverypoint distance is lower than 10
-		if hasStarted and GetDistanceBetweenCoords(coords, Config.deliveryPoints[randomDelivery], false) < 10 then
+		if hasStarted and GetDistanceBetweenCoords(coords, Config.deliveryPoint.delPoint, false) < 30 then
 			RemoveBlip(oxyBlips)
 		end
 
 		--if player dies, mission is aborted and loses all the money and stash
 		if hasStarted and IsEntityDead(GetPlayerPed(-1)) then
 			cancelOxy(false)
-		end 
+		end
 	end
 end)
