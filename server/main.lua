@@ -1,4 +1,6 @@
 ESX = nil
+local cooldown = 0
+local anycops = 0
 
 TriggerEvent('esx:getSharedObject', function(obj) 
     ESX = obj 
@@ -16,10 +18,33 @@ AddEventHandler('atlantis_oxy:checkMoney', function(mAccount, mAmount)
 
     if moneyAmount >= mAmount then
         xPlayer.removeAccountMoney(mAccount, mAmount)
+        --update cooldown
+	    cooldown = Config.CooldownMinutes * 60000
         TriggerClientEvent('atlantis_oxy:startOxy', source)
     else
         TriggerClientEvent('mythic_notify:client:SendAlert', source, {type = 'error', text = _U('not_enough_bmoney'), length = 2500})
     end
+end)
+
+--Check if cops are online
+ESX.RegisterServerCallback('atlantis_oxy:copsOn',function(source, cb)
+    local anycops = 0
+    local playerList = ESX.GetPlayers()
+    for i=1, #playerList, 1 do
+        local _source = playerList[i]
+        local xPlayer = ESX.GetPlayerFromId(_source)
+        local playerjob = xPlayer.job.name
+      
+        if playerjob == 'police' then
+            anycops = anycops + 1
+        end
+    end
+    cb(anycops)
+end)
+
+--Cooldown callback event
+ESX.RegisterServerCallback('atlantis_oxy:isCooled',function(source, cb)
+    cb(cooldown)
 end)
 
 --[[
@@ -88,6 +113,16 @@ AddEventHandler('atlantis_oxy:removeStash', function(sPackage, mAccount, mAmount
     else
         xPlayer.removeInventoryItem(sPackage, xPackage)
     end
+end)
+
+--Cooldown manager
+AddEventHandler('onResourceStart', function(resource)
+	while true do
+		Citizen.Wait(5000)
+		if cooldown > 0 then
+			cooldown = cooldown - 5000
+		end
+	end
 end)
 
 -- Version Checker

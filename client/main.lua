@@ -100,11 +100,23 @@ end
 ]]
 RegisterNetEvent('atlantis_oxy:initOxy')
 AddEventHandler('atlantis_oxy:initOxy', function()
-	if Config.usebMoney then
-		TriggerServerEvent('atlantis_oxy:checkMoney', Config.mAccount, Config.startAmount)
-	else
-		TriggerEvent('atlantis_oxy:startOxy')
-	end
+	ESX.TriggerServerCallback('atlantis_oxy:isCooled', function(cooldown)
+		if cooldown <= 0 then
+			ESX.TriggerServerCallback('atlantis_oxy:copsOn', function(anycops)
+				if anycops >= Config.minCops then
+					if Config.usebMoney then
+						TriggerServerEvent('atlantis_oxy:checkMoney', Config.mAccount, Config.startAmount)
+					else
+						TriggerEvent('atlantis_oxy:startOxy')
+					end
+				else
+					TriggerEvent('mythic_notify:client:SendAlert', {type = 'error', text = _U('not_enough_cops'), length = 2500})
+				end
+			end)
+		else
+			TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('cooldown', math.ceil(cooldown/1000)), length = 2500})
+		end
+	end)
 end)
 
 RegisterNetEvent('atlantis_oxy:startOxy')
