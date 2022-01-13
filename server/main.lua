@@ -4,13 +4,17 @@ TriggerEvent('esx:getSharedObject', function(obj)
     ESX = obj 
 end)
 
-RegisterServerEvent('atlantis_oxy:clearMoney')
-AddEventHandler('atlantis_oxy:clearMoney', function(mAccount, mAmount)
+--[[
+    event that checks if the player has the money to start the mission
+    @mAccount - money account name
+    @mAmount - money amount
+]]
+RegisterServerEvent('atlantis_oxy:checkMoney')
+AddEventHandler('atlantis_oxy:checkMoney', function(mAccount, mAmount)
     local xPlayer = ESX.GetPlayerFromId(source)
+    local moneyAmount = xPlayer.getAccount(mAccount).money
 
-    local xAccount = xPlayer.getAccount(mAccount).money
-
-    if xAccount >= mAmount then
+    if moneyAmount >= mAmount then
         xPlayer.removeAccountMoney(mAccount, mAmount)
         TriggerClientEvent('atlantis_oxy:startOxy', source)
     else
@@ -18,19 +22,27 @@ AddEventHandler('atlantis_oxy:clearMoney', function(mAccount, mAmount)
     end
 end)
 
-RegisterServerEvent('atlantis_oxy:itemAdder')
-AddEventHandler('atlantis_oxy:itemAdder', function(iName)
+--[[
+    event that add the item to the player stash,
+    and starts the packages recovery
+    @iName - item name
+]]
+RegisterServerEvent('atlantis_oxy:invAdder')
+AddEventHandler('atlantis_oxy:invAdder', function(iName, iQuantity)
     local xPlayer = ESX.GetPlayerFromId(source)
 
-    xPlayer.addInventoryItem(iName, 1)
+    xPlayer.addInventoryItem(iName, iQuantity)
+
+    TriggerClientEvent('atlantis_oxy:packageRecovery', source)
 end)
 
 --[[
+    event that checks exchange suspicious packages with a random amount of oxy
     @sPackage: package item name
     @dOxy: oxy item name
 ]]
-RegisterServerEvent('atlantis_oxy:giveOxy')
-AddEventHandler('atlantis_oxy:giveOxy', function(sPackage, dOxy)
+RegisterServerEvent('atlantis_oxy:packageToOxy')
+AddEventHandler('atlantis_oxy:packageToOxy', function(sPackage, dOxy)
     local xPlayer = ESX.GetPlayerFromId(source)
 
     local xPackage = xPlayer.getInventoryItem(sPackage).count
