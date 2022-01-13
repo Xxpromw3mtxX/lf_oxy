@@ -16,4 +16,5 @@ Locales['it'] = {
     ['cooldown'] = 'Hai appena completato un lavoro. Aspetta %s secondi prima di avviarne un altro.',
     ['bComing'] = 'Un compratore arriverà a breve.',
     ['cancel'] = 'Annulla missione',
+    ['custom_plate'] = 'OXY',
 }
