@@ -15,4 +15,6 @@ Locales['it'] = {
     ['bComing'] = 'Un compratore arriverà a breve.',
     ['cancel'] = 'Annulla missione',
     ['custom_plate'] = 'OXY',
+    ['cooldown'] = 'Hai appena completato un lavoro. Aspetta %s secondi prima di avviarne un altro.',
+    ['not_enough_cops'] = 'Non ci sono abbastanza poliziotti in città!',
 }
