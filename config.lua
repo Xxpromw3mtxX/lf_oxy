@@ -6,6 +6,12 @@ Config.Locale = 'it'
 --Wait ticktime
 Config.TickTime = 100
 
+--Cooldown time
+Config.CooldownMinutes = 10 --minutes
+
+--Cops required
+Config.minCops = 2
+
 --Starting Black money amount
 Config.usebMoney = true
 Config.mAccount = 'black_money'
