@@ -11,9 +11,6 @@ Config.usebMoney = true
 Config.mAccount = 'black_money'
 Config.startAmount = 1500
 
---Cooldown time
-Config.CooldownMinutes = 10
-
 --Start item
 Config.startItem = 'suspicious_package'
 Config.maxStartItem = 3
@@ -31,12 +28,10 @@ Config.npcLocations = {
 }
 
 --Suspicious package delivery
-Config.deliveryPoints = {
-    vector3(969.8, -1557, 31.2),
-    vector3(-179.4, -1976.6, 27.6),
-    vector3(-775.4, 362, 87.9),
-    vector3(-222.6, -1483.3, 31.3),
-    vector3(217.7, -166.3, 56.6),
+Config.deliveryPoint = {
+    pStart = vector3(-86.6, 74.9, 71.6),
+    pHeading = 150.97,
+    delPoint = vector3(212.7, -161.9, 56.8)
 }
 
 --Ped vehicle model, drive types and max speed
