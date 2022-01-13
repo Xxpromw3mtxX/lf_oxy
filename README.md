@@ -21,9 +21,6 @@ Oxy Runs script - Clean dirty money and get cash for doing it.
 4. You're set!
 5. **Do not change the name or it will not work.**
 
-## Known Bugs/Issues
-* None
-
 # Legal
 License
 atlantis_oxy - Oxy Runs script - Clean dirty money and get cash for doing it.
