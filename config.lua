@@ -48,9 +48,9 @@ Config.vehicleModels = {
     'sultan',
 }
 
-Config.dType = 786603 --Normal
+Config.dType = 786603 --Rushed
 
-Config.pedVehiclemSpeed = 30.0
+Config.vehSpeed = 30.0
 
 --Peds
 Config.peds = {
