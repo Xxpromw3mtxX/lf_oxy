@@ -1,5 +1,7 @@
 Config = {}
 
+Config.resource = GetCurrentResourceName()
+
 --Language
 Config.Locale = 'it'
 
@@ -8,6 +10,9 @@ Config.TickTime = 100
 
 --Cooldown time
 Config.CooldownMinutes = 10 --minutes
+
+--Version checker
+Config.vc = true
 
 --Cops required
 Config.minCops = 0

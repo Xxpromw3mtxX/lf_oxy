@@ -135,22 +135,21 @@ AddEventHandler('onResourceStart', function(resource)
 end)
 
 -- Version Checker
---[[PerformHttpRequest("https://raw.githubusercontent.com/xxpromw3mtxx/lf_oxy/main/.version", function(err, text, headers)
-    Citizen.Wait(2000)
-    local curVer = GetResourceMetadata(GetCurrentResourceName(), "version")
+if Config.vc then
+    SetTimeout(2000, function()
+        PerformHttpRequest("https://api.github.com/repos/xxpromw3mtxx/lf_oxy/releases/latest", function(status, response)
+            if status ~= 200 then return end
 
-    if (text ~= nil) then
-        if (text ~= curVer) then
-            print '^1-----------------------------------------^0'
-            print '^1         UPDATE AVAILABLE lf_oxy         ^0'
-            print '^1          GET IT ON GITHUB NOW           ^0'
-            print '^1-----------------------------------------^0'
-        else
-            print("^2lf_oxy is up to date!^0")
-        end
-    else
-        print '^1----------------------------------------^0'
-        print '^1      ERROR GETTING ONLINE VERSION      ^0'
-        print '^1----------------------------------------^0'
-    end 
-end)]]
+            response = json.decode(response)
+            if response.prerelease then return end
+            
+            local currentVersion = GetResourceMetadata(Config.resource, 'version', 0):match('%d%.%d+%.%d+')
+            if not currentVersion then return end
+
+            local latestVersion = response.tag_name:match('%d%.%d+%.%d+')
+            if currentVersion >= latestVersion then return end
+
+            print(('^3An update is available for %s (current version: %s)\r\n%s^0'):format(Config.resource, currentVersion, response.html_url))
+        end, 'GET')
+    end)
+end
