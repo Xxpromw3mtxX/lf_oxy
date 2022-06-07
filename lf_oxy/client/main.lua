@@ -4,7 +4,6 @@ local oxyPed
 local deliveryPed
 local oxyStart
 --local variables
-local randomPed = 1
 local randomPedSeller = 1											--Do i really need to explain this part to you?
 local randomPedDelivery = 1											--Could we have less variables? Maybe... maybe....
 local hasStarted = false											--Do you think i have the time and the will to do it?
@@ -156,7 +155,6 @@ end)
 
 RegisterNetEvent('lf_oxy:startOxy')
 AddEventHandler('lf_oxy:startOxy', function()
-	randomPed = math.random(1, #Config.npcLocations)
 	randomPedSeller = math.random(1, #Config.peds.sellers)
 	
 	suspicious = math.random(1, Config.maxStartItem)
@@ -166,7 +164,7 @@ AddEventHandler('lf_oxy:startOxy', function()
 	
 	TriggerEvent('mythic_notify:client:SendAlert', {type = 'inform', text = _U('oxyHasStarted'), length = 2500})
 
-	setWaypoint(Config.npcLocations[randomPed].position, _U('oRecovery'))
+	setWaypoint(vector3(213.1, -3316.8, 4.8), _U('oRecovery'))
 
 	RequestModel(GetHashKey(Config.peds.sellers[randomPedSeller].model))
 	while not HasModelLoaded(GetHashKey(Config.peds.sellers[randomPedSeller].model)) do
@@ -174,7 +172,7 @@ AddEventHandler('lf_oxy:startOxy', function()
 	end
 
     if not DoesEntityExist(oxyPed) then
-		oxyPed = CreatePed(Config.peds.sellers[randomPedSeller].type, Config.peds.sellers[randomPedSeller].model, Config.npcLocations[randomPed].position, Config.npcLocations[randomPed].heading, false, false)
+		oxyPed = CreatePed(Config.peds.sellers[randomPedSeller].type, Config.peds.sellers[randomPedSeller].model, vector3(213.1, -3316.8, 4.8), 184.06, false, false)
 		FreezeEntityPosition(oxyPed, true)
 		SetEntityInvincible(oxyPed, true)
 		SetBlockingOfNonTemporaryEvents(oxyPed, true)
@@ -383,7 +381,7 @@ Citizen.CreateThread(function()
 		local coords = GetEntityCoords(GetPlayerPed(-1))
 
 		--if the mission has started, the distance between the player and the first location is lower than 10 and the packages are different from 0, removed the current blip
-		if hasStarted and GetDistanceBetweenCoords(coords, Config.npcLocations[randomPed].position, false) < 10 and suspicious ~= 0 then
+		if hasStarted and GetDistanceBetweenCoords(coords, vector3(213.1, -3316.8, 4.8), false) < 10 and suspicious ~= 0 then
 			RemoveBlip(oxyBlips)
 		end
 

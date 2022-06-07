@@ -30,14 +30,6 @@ Config.maxStartItem = 3
 Config.rewardItem = 'oxy'
 Config.maxOxy = 5
 
---NPC Locations
-Config.npcLocations = {
-    {
-        position = vector3(213.1, -3316.8, 4.8),
-        heading = 184.06
-    },
-}
-
 --Suspicious package delivery
 Config.deliveryPoint = {
     vector3(212.7, -161.9, 56.8),
