@@ -1,5 +1,5 @@
 # atlantis_oxy
-Oxy Runs script - Clean dirty money and get cash for doing it.
+Oxy Runs script - Clean black money by delivering packages.
 
 ## Creating Issue
 * Check the [Closed Topics](https://github.com/xxpromw3mtxx/atlantis_oxy/issues?q=is%3Aissue+is%3Aclosed) & [Wiki](https://github.com/Xxpromw3mtxX/atlantis_oxy/wiki) before opening an issue to see if your issue has already been Answered.
@@ -21,14 +21,28 @@ Oxy Runs script - Clean dirty money and get cash for doing it.
 4. You're set!
 5. **Do not change the name or it will not work.**
 
-# Legal
-License
-atlantis_oxy - Oxy Runs script - Clean dirty money and get cash for doing it.
+<br>
 
-Copyright (C) 2011-2022 lilfraae/Xxprom3mtxX
+<table><tr><td><h3 align='center'>Legal Notices</h2></tr></td>
+<tr><td>
+lf_oxy for ESX Legacy  
 
-This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
+Copyright © 2022  [lilfraae](https://github.com/Xxpromw3mtxX)
 
-This program Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
 
-You should have received a copy Of the GNU General Public License along with this program. If Not, see http://www.gnu.org/licenses/.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.  
+
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.  
+
+
+You should have received a copy of the GNU General Public License
+along with this program.  
+If not, see <https://www.gnu.org/licenses/>
+</td></tr></table>
